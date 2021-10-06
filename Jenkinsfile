@@ -2,6 +2,7 @@ pipeline {
     agent any
     environment {
         DOCKER_CREDENTIALS = credentials('dockerHub')
+        SERVER_CREDENTIALS = credentials('server-cred')
     }
     stages {
 
@@ -23,7 +24,34 @@ pipeline {
                         }
             }
         }
-
+        stage("Deploy") 
+        {
+            steps 
+            {
+                script 
+                {
+                    
+                    def remote = [:]
+                    remote.host = "192.168.0.201"
+                    remote.allowAnyHosts = true
+                    
+                    echo "INFO: Deploy Stage"
+                    withCredentials([
+                        usernamePassword(credentialsId: 'server-cred', usernameVariable: 'USER', passwordVariable: 'PSWD')
+                    ]) {
+                        remote.user = USER
+                        remote.password = PSWD
+                        sh '''
+                            docker rm -f newcontainer
+                            docker run -d --name newcontainer theankitojha/dockerwebapp
+                        '''
+                    }
+                    
+                    
+                
+                }
+            }
+        }
         
     }
 }
