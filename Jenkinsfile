@@ -1,11 +1,45 @@
-node {
-    checkout scm
+pipeline {
+    agent any
+    environment {
+        SERVER_CREDENTIALS = credentials('server-cred')
+        DOCKER_CREDENTIALS = credentials('docker-cred')
+    }
+    stages {
 
-    docker.withRegistry('https://registry.hub.docker.com', 'dockerHub') {
+        stage("Build")
+        {
+            steps
+            {
+                script {
+                        echo "INFO: Build Stage"
+                        withCredentials ([
+                            usernamePassword(credentials: 'docker-cred', usernameVariable: USER, passwordVariable: PWD)    
+                        ]) {
+                            docker login --username ${USER} --password ${PWD}"
+                            docker build -t theankitojha/dockerwebapp ."
+                            //docker tag node:test theankitojha/node:test
+                            docker push theankitojha/dockerwebapp
+                           }
+                        }
+            }
+        }
 
-        def customImage = docker.build("theankitojha/dockerwebapp")
-
-        /* Push the container to the custom Registry */
-        customImage.push()
+        stage("Deploy")
+        {
+            steps
+            {
+                script {
+                            echo "INFO: Deploy Stage"
+                    withCredentials ([
+                        usernamePassword(credentials: 'server-cred', usernameVariable: USER, passwordVariable: PWD)
+                    ]) {
+                        docker rm -f newcontainer
+                        docker run -d --name newcontainer theankitojha/dockerwebapp
+                    
+                    }
+                            
+                       }
+            }
+        }
     }
 }
