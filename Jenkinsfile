@@ -15,7 +15,7 @@ pipeline {
                             usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'USER', passwordVariable: 'PWD')    
                         ]) {
                             sh '''
-                            docker login --username ${USER} --password ${PWD}
+                            docker login https://index.docker.io/v1/ --username ${USER} --password ${PWD}
                             docker build -t theankitojha/dockerwebapp .
                             docker push theankitojha/dockerwebapp
                             '''
