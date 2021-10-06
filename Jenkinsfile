@@ -34,7 +34,7 @@ pipeline {
                 {
                     
                     def remote = [:]
-                    remote.host = "192.168.0.201"
+                    remote.host = "192.168.0.202"
                     remote.allowAnyHosts = true
                     
                     echo "INFO: Deploy Stage"
