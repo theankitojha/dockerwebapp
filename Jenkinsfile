@@ -21,23 +21,25 @@ pipeline {
                    
                     
                         echo "INFO: Build Stage"
-                    withCredentials ([
-                            sshUserPrivateKey(credentialsId: 'serverKey', keyFileVariable: 'IDENTITY', usernameVariable: 'theankit', passwordVariable: '') 
-                    ]) {
-                         remote.user = theankit
-                        remote.identityFile = IDENTITY
+                   
                         
                         withCredentials ([
                             usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'USER', passwordVariable: 'PSWD')    
                         ]) {
                             sh 'docker login https://index.docker.io/v1/ --username ${USER} --password ${PSWD}'
                            }
-                            sh '''
-                            docker rmi -f theankitojha/dockerwebapp
-                            docker rm -f newcontainer
-                            docker build -t theankitojha/dockerwebapp .
-                            docker push theankitojha/dockerwebapp
-                            '''
+                  
+                       withCredentials ([
+                            sshUserPrivateKey(credentialsId: 'serverKey', keyFileVariable: 'IDENTITY', usernameVariable: 'theankit', passwordVariable: '') 
+                        ]) {
+                              remote.user = theankit
+                              remote.identityFile = IDENTITY
+                              sh '''
+                              docker rmi -f theankitojha/dockerwebapp
+                              docker rm -f newcontainer
+                              docker build -t theankitojha/dockerwebapp .
+                              docker push theankitojha/dockerwebapp
+                              '''
                            }
                         }
             }
