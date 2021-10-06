@@ -15,8 +15,8 @@ pipeline {
                         withCredentials ([
                             usernamePassword(credentials: 'docker-cred', usernameVariable: USER, passwordVariable: PWD)    
                         ]) {
-                            docker login --username ${USER} --password ${PWD}"
-                            docker build -t theankitojha/dockerwebapp ."
+                            docker login --username ${USER} --password ${PWD}
+                            docker build -t theankitojha/dockerwebapp .
                             //docker tag node:test theankitojha/node:test
                             docker push theankitojha/dockerwebapp
                            }
