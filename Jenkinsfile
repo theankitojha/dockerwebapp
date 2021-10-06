@@ -1,3 +1,7 @@
+  def remote = [:]
+  remote.host = "192.168.0.202"
+  remote.allowAnyHosts = true
+
 pipeline {
     agent any
     environment {
@@ -14,14 +18,15 @@ pipeline {
             {
                 script {
                     
-                     def remote = [:]
-                    remote.host = "192.168.0.202"
-                    remote.allowAnyHosts = true
+                   
                     
                         echo "INFO: Build Stage"
                     withCredentials ([
                             sshUserPrivateKey(credentialsId: 'serverKey', keyFileVariable: 'IDENTITY', usernameVariable: 'theankit', passwordVariable: '') 
                     ]) {
+                         remote.user = theankit
+                        remote.identityFile = IDENTITY
+                        
                         withCredentials ([
                             usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'USER', passwordVariable: 'PSWD')    
                         ]) {
@@ -43,9 +48,7 @@ pipeline {
             {
                 script 
                 {
-                     def remote = [:]
-                    remote.host = "192.168.0.202"
-                    remote.allowAnyHosts = true
+               
                  
                     
                     echo "INFO: Deploy Stage"
