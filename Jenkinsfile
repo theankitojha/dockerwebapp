@@ -5,6 +5,10 @@ pipeline {
         SERVER_CREDENTIALS = credentials('serverKey')
     }
     stages {
+        
+                    def remote = [:]
+                    remote.host = "192.168.0.202"
+                    remote.allowAnyHosts = true
 
         stage("Build")
         {
@@ -12,11 +16,15 @@ pipeline {
             {
                 script {
                         echo "INFO: Build Stage"
+                    withCredentials ([
+                            sshUserPrivateKey(credentialsId: 'serverKey', keyFileVariable: 'IDENTITY', usernameVariable: 'theankit', passwordVariable: '') 
+                    ]) {
                         withCredentials ([
                             usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'USER', passwordVariable: 'PSWD')    
                         ]) {
+                            sh 'docker login https://index.docker.io/v1/ --username ${USER} --password ${PSWD}'
+                           }
                             sh '''
-                            docker login https://index.docker.io/v1/ --username ${USER} --password ${PSWD}
                             docker rmi -f theankitojha/dockerwebapp
                             docker rm -f newcontainer
                             docker build -t theankitojha/dockerwebapp .
@@ -33,9 +41,7 @@ pipeline {
                 script 
                 {
                     
-                    def remote = [:]
-                    remote.host = "192.168.0.202"
-                    remote.allowAnyHosts = true
+                 
                     
                     echo "INFO: Deploy Stage"
                     withCredentials([
