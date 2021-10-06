@@ -26,7 +26,7 @@ pipeline {
                         withCredentials ([
                             usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'USER', passwordVariable: 'PSWD')    
                         ]) {
-                            sh 'docker login https://index.docker.io/v1/ --username ${USER} --password ${PSWD}'
+                            sh 'docker login --username ${USER} --password ${PSWD}'
                            }
                   
                        withCredentials ([
