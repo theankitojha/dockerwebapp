@@ -1,7 +1,6 @@
 pipeline {
     agent any
     environment {
-        SERVER_CREDENTIALS = credentials('server-cred')
         DOCKER_CREDENTIALS = credentials('dockerHub')
     }
     stages {
@@ -25,23 +24,6 @@ pipeline {
             }
         }
 
-        stage("Deploy")
-        {
-            steps
-            {
-                script {
-                            echo "INFO: Deploy Stage"
-                    withCredentials ([
-                        usernamePassword(credentials: 'server-cred', usernameVariable: USER, passwordVariable: PWD)
-                    ]) {
-                        sh '''
-                        docker rm -f newcontainer
-                        docker run -d --name newcontainer theankitojha/dockerwebapp
-                        '''
-                    }
-                            
-                       }
-            }
-        }
+        
     }
 }
