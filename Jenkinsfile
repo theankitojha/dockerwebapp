@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         SERVER_CREDENTIALS = credentials('server-cred')
-        DOCKER_CREDENTIALS = credentials('docker-cred')
+        DOCKER_CREDENTIALS = credentials('dockerHub')
     }
     stages {
 
@@ -13,7 +13,7 @@ pipeline {
                 script {
                         echo "INFO: Build Stage"
                         withCredentials ([
-                            usernamePassword(credentials: 'docker-cred', usernameVariable: USER, passwordVariable: PWD)    
+                            usernamePassword(credentials: 'dockerHub', usernameVariable: USER, passwordVariable: PWD)    
                         ]) {
                             sh '''
                             docker login --username ${USER} --password ${PWD}
