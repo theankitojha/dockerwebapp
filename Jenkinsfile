@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         DOCKER_CREDENTIALS = credentials('dockerHub')
-        SERVER_CREDENTIALS = credentials('server-cred')
+        SERVER_CREDENTIALS = credentials('serverKey')
     }
     stages {
 
@@ -17,6 +17,8 @@ pipeline {
                         ]) {
                             sh '''
                             docker login https://index.docker.io/v1/ --username ${USER} --password ${PSWD}
+                            docker rmi -f theankitojha/dockerwebapp
+                            docker rm -f newcontainer
                             docker build -t theankitojha/dockerwebapp .
                             docker push theankitojha/dockerwebapp
                             '''
@@ -37,10 +39,10 @@ pipeline {
                     
                     echo "INFO: Deploy Stage"
                     withCredentials([
-                        usernamePassword(credentialsId: 'server-cred', usernameVariable: 'USER', passwordVariable: 'PSWD')
+                        sshUserPrivateKey(credentialsId: 'serverKey', keyFileVariable: 'IDENTITY', usernameVariable: 'theankit', passwordVariable: '')
                     ]) {
-                        remote.user = USER
-                        remote.password = PSWD
+                        remote.user = theankit
+                        remote.identityFile = IDENTITY
                         sh '''
                             docker rm -f newcontainer
                             docker run -d --name newcontainer theankitojha/dockerwebapp
