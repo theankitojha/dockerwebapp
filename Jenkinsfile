@@ -15,10 +15,11 @@ pipeline {
                         withCredentials ([
                             usernamePassword(credentials: 'docker-cred', usernameVariable: USER, passwordVariable: PWD)    
                         ]) {
+                            sh '''
                             docker login --username ${USER} --password ${PWD}
                             docker build -t theankitojha/dockerwebapp .
-                            //docker tag node:test theankitojha/node:test
                             docker push theankitojha/dockerwebapp
+                            '''
                            }
                         }
             }
@@ -33,9 +34,10 @@ pipeline {
                     withCredentials ([
                         usernamePassword(credentials: 'server-cred', usernameVariable: USER, passwordVariable: PWD)
                     ]) {
+                        sh '''
                         docker rm -f newcontainer
                         docker run -d --name newcontainer theankitojha/dockerwebapp
-                    
+                        '''
                     }
                             
                        }
