@@ -12,7 +12,7 @@ pipeline {
                 script {
                         echo "INFO: Build Stage"
                         withCredentials ([
-                            usernamePassword(credentials: 'dockerHub', usernameVariable: 'USER', passwordVariable: 'PWD')    
+                            usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'USER', passwordVariable: 'PWD')    
                         ]) {
                             sh '''
                             docker login --username ${USER} --password ${PWD}
