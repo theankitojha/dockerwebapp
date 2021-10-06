@@ -24,9 +24,9 @@ pipeline {
                    
                         
                         withCredentials ([
-                            usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'USER', passwordVariable: 'PSWD')    
+                            usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'userName', passwordVariable: 'paswd')    
                         ]) {
-                            sh 'docker login --username ${USER} --password ${PSWD}'
+                            sh 'docker login --username ${userName} --password ${paswd}'
                            }
                   
                        withCredentials ([
