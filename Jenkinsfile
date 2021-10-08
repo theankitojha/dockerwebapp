@@ -23,13 +23,20 @@ pipeline {
                          
                           withCredentials ([
                             sshUserPrivateKey(credentialsId: 'serverKey', keyFileVariable: 'IDENTITY', usernameVariable: 'theankit', passwordVariable: '') 
-                            usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'userName', passwordVariable: 'paswd')
+                     
                         ]) {
                              remote.user = theankit
                              remote.identityFile = IDENTITY
+                            
+                        withCredentials ([
+                            usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'USER', passwordVariable: 'PSWD')    
+                        ]) {
                           
                             sh ''' 
-                              docker login https://index.docker.io/v1/ --username ${userName} --password ${paswd}
+                              docker login https://index.docker.io/v1/ --username ${userName} --password ${paswd} '''
+                           }
+                              
+                              sh '''
                               docker rmi -f theankitojha/dockerwebapp
                               docker rm -f newcontainer
                               docker build -t theankitojha/dockerwebapp .
