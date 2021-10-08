@@ -62,6 +62,7 @@ pipeline {
                         remote.user = theankit
                         remote.identityFile = IDENTITY
                         sh '''
+                        
                             docker rm -f newcontainer
                             docker run -d --name newcontainer theankitojha/dockerwebapp
                         '''
