@@ -29,7 +29,7 @@ pipeline {
                              remote.identityFile = IDENTITY
                             
                         withCredentials ([
-                            usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'USER', passwordVariable: 'PSWD')    
+                            usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'userName', passwordVariable: 'paswd')    
                         ]) {
                           
                             sh ''' 
