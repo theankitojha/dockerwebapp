@@ -35,7 +35,7 @@ pipeline {
                           
                             sh ''' 
                               docker login https://index.docker.io/v1/ --username ${userName} --password ${paswd} '''
-                           }
+                         
                               
                               sh '''
                               docker rmi -f theankitojha/dockerwebapp
@@ -43,6 +43,7 @@ pipeline {
                               docker build -t theankitojha/dockerwebapp .
                               docker push theankitojha/dockerwebapp
                               '''
+                            }
                            }
                         }
             }
