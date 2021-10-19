@@ -7,7 +7,7 @@ pipeline {
     environment {
         DOCKER_CREDENTIALS = credentials('dockerHub')
         SERVER_CREDENTIALS = credentials('serverKey')
-        remoteServer = '192.168.0.202'
+        
     }
   
     stages {
@@ -19,16 +19,15 @@ pipeline {
                 script {
                   
                         echo "INFO: Build Stage"
-                           
+                          sshagent(['serverKey']) {
                             sh '''
-                              ssh -tt -o StrictHostKeyChecking=no ${SERVER_CREDENTIALS_USR}@${env.remoteServer}
                               docker login https://index.docker.io/v1/ --username ${DOCKER_CREDENTIALS_USR} --password ${DOCKER_CREDENTIALS_PSW}
                               docker rmi -f theankitojha/dockerwebapp
                               docker rm -f newcontainer
                               docker build -t theankitojha/dockerwebapp .
                               docker push theankitojha/dockerwebapp
                               '''
-                            
+                          }
                         }
             }
         }
@@ -40,13 +39,13 @@ pipeline {
                 {
                
                     echo "INFO: Deploy Stage"
-                          
+                        sshagent(['serverKey']) {  
                         sh '''
-                            ssh -tt -o StrictHostKeyChecking=no ${SERVER_CREDENTIALS_USR}@${env.remoteServer}
+                           
                             docker rm -f newcontainer
                             docker run -d --name newcontainer theankitojha/dockerwebapp
                         '''
-                        
+                  }  
                 }
             }
         }
