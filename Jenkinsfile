@@ -65,7 +65,7 @@ pipeline {
                         remote.identityFile = IDENTITY
                           
                         sh '''
-                            ssh ${remote.user}@${remote.host}
+                            ssh -i ${IDENTITY} ${remote.host}
                             docker rm -f newcontainer
                             docker run -d --name newcontainer theankitojha/dockerwebapp
                         '''
