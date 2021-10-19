@@ -19,7 +19,7 @@ pipeline {
                 script {
                   
                         echo "INFO: Build Stage"
-                          sshagent(['serverKey']) {
+                          sshagent(credentials: ['serverKey']) {
                             sh '''
                               docker login https://index.docker.io/v1/ --username ${DOCKER_CREDENTIALS_USR} --password ${DOCKER_CREDENTIALS_PSW}
                               docker rmi -f theankitojha/dockerwebapp
@@ -39,7 +39,7 @@ pipeline {
                 {
                
                     echo "INFO: Deploy Stage"
-                        sshagent(['serverKey']) {  
+                        sshagent(credentials: ['serverKey']) {
                         sh '''
                            
                             docker rm -f newcontainer
