@@ -8,10 +8,9 @@ pipeline {
         DOCKER_CREDENTIALS = credentials('dockerHub')
         SERVER_CREDENTIALS = credentials('serverKey')
     }
+  
     stages {
-        
-                   
-
+      
         stage("Build")
         {
             steps
@@ -19,7 +18,8 @@ pipeline {
                 script {
                   
                         echo "INFO: Build Stage"
-                            sh ''' 
+                            sh '''
+                              ssh ${SERVER_CREDENTIALS_USR}@${remote.host}
                               docker login https://index.docker.io/v1/ --username ${DOCKER_CREDENTIALS_USR} --password ${DOCKER_CREDENTIALS_PSW}
                               docker rmi -f theankitojha/dockerwebapp
                               docker rm -f newcontainer
@@ -36,18 +36,13 @@ pipeline {
                 script 
                 {
                
-                 
-                    
                     echo "INFO: Deploy Stage"
                           
                         sh '''
+                            ssh ${SERVER_CREDENTIALS_USR}@${remote.host}
                             docker rm -f newcontainer
                             docker run -d --name newcontainer theankitojha/dockerwebapp
                         '''
-                   
-                    
-                    
-                
                 }
             }
         }
