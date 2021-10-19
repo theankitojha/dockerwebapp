@@ -1,49 +1,27 @@
-  def remote = [:]
-  remote.host = "192.168.0.202"
-  remote.allowAnyHosts = true
-
 pipeline {
     agent any
     environment {
         DOCKER_CREDENTIALS = credentials('dockerHub')
-        SERVER_CREDENTIALS = credentials('serverKey')
+        SERVER_CREDENTIALS = credentials('server-cred')
     }
     stages {
-        
-                   
 
         stage("Build")
         {
             steps
             {
                 script {
-                  
                         echo "INFO: Build Stage"
-                
-                         
-                          withCredentials ([
-                            sshUserPrivateKey(credentialsId: 'serverKey', usernameVariable: 'theankit', passwordVariable: '') 
-                     
-                        ]) {
-                             remote.user = theankit
-                            
-                            
                         withCredentials ([
-                            usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'userName', passwordVariable: 'paswd')    
+                            usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'USER', passwordVariable: 'PSWD')    
                         ]) {
-                          
-                          
-                            sh ''' 
-                              docker login https://index.docker.io/v1/ --username ${userName} --password ${paswd} '''
-                         
-                              
-                              sh '''
-                              docker rmi -f theankitojha/dockerwebapp
-                              docker rm -f newcontainer
-                              docker build -t theankitojha/dockerwebapp .
-                              docker push theankitojha/dockerwebapp
-                              '''
-                            }
+                            sh '''
+                            docker login https://index.docker.io/v1/ --username ${USER} --password ${PSWD}
+                            docker rmi -f theankitojha/dockerwebapp
+                            docker rm -f newcontainer
+                            docker build -t theankitojha/dockerwebapp .
+                            docker push theankitojha/dockerwebapp
+                            '''
                            }
                         }
             }
@@ -54,17 +32,18 @@ pipeline {
             {
                 script 
                 {
-               
-                 
+                    
+                    def remote = [:]
+                    remote.host = "192.168.0.202"
+                    remote.allowAnyHosts = true
                     
                     echo "INFO: Deploy Stage"
                     withCredentials([
-                        sshUserPrivateKey(credentialsId: 'serverKey', usernameVariable: 'theankit', passwordVariable: '')
+                        usernamePassword(credentialsId: 'server-cred', usernameVariable: 'USER', passwordVariable: 'PSWD')
                     ]) {
-                        remote.user = theankit
-                    
+                        remote.user = USER
+                        remote.password = PSWD
                         sh '''
-                        
                             docker rm -f newcontainer
                             docker run -d --name newcontainer theankitojha/dockerwebapp
                         '''
