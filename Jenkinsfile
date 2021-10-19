@@ -18,6 +18,7 @@ pipeline {
                 script {
                   
                         echo "INFO: Build Stage"
+                            sshagent(['serverKey']) {
                             sh '''
                               ssh -tt -o StrictHostKeyChecking=no ${SERVER_CREDENTIALS_USR}@192.168.0.202
                               docker login https://index.docker.io/v1/ --username ${DOCKER_CREDENTIALS_USR} --password ${DOCKER_CREDENTIALS_PSW}
@@ -26,6 +27,7 @@ pipeline {
                               docker build -t theankitojha/dockerwebapp .
                               docker push theankitojha/dockerwebapp
                               '''
+                            }
                         }
             }
         }
@@ -37,12 +39,15 @@ pipeline {
                 {
                
                     echo "INFO: Deploy Stage"
+                    
+                        sshagent(['serverKey']) {
                           
                         sh '''
                             ssh -tt -o StrictHostKeyChecking=no ${SERVER_CREDENTIALS_USR}@192.168.0.202
                             docker rm -f newcontainer
                             docker run -d --name newcontainer theankitojha/dockerwebapp
                         '''
+                        }
                 }
             }
         }
