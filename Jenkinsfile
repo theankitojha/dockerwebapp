@@ -22,11 +22,11 @@ pipeline {
                 
                          
                           withCredentials ([
-                            sshUserPrivateKey(credentialsId: 'serverKey', keyFileVariable: 'IDENTITY', usernameVariable: 'theankit', passwordVariable: '') 
+                            sshUserPrivateKey(credentialsId: 'serverKey', usernameVariable: 'theankit', passwordVariable: '') 
                      
                         ]) {
                              remote.user = theankit
-                             remote.identityFile = IDENTITY
+                            
                             
                         withCredentials ([
                             usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'userName', passwordVariable: 'paswd')    
@@ -59,10 +59,10 @@ pipeline {
                     
                     echo "INFO: Deploy Stage"
                     withCredentials([
-                        sshUserPrivateKey(credentialsId: 'serverKey', keyFileVariable: 'IDENTITY', usernameVariable: 'theankit', passwordVariable: '')
+                        sshUserPrivateKey(credentialsId: 'serverKey', usernameVariable: 'theankit', passwordVariable: '')
                     ]) {
                         remote.user = theankit
-                        remote.identityFile = IDENTITY
+                    
                         sh '''
                         
                             docker rm -f newcontainer
