@@ -21,7 +21,6 @@ pipeline {
                         echo "INFO: Build Stage"
                           sshagent(credentials: ['serverKey']) {
                             sh '''
-                              ssh -tt ${SERVER_CREDENTIALS_USR}@192.168.0.202
                               docker login https://index.docker.io/v1/ --username ${DOCKER_CREDENTIALS_USR} --password ${DOCKER_CREDENTIALS_PSW}
                               docker rmi -f theankitojha/dockerwebapp
                               docker rm -f newcontainer
@@ -40,12 +39,12 @@ pipeline {
                 {
                
                     echo "INFO: Deploy Stage"
-                        sshagent(credentials: ['serverKey']) {
-                        sh '''
-                            ssh -tt ${SERVER_CREDENTIALS_USR}@192.168.0.202
-                            docker rm -f newcontainer
-                            docker run -d --name newcontainer theankitojha/dockerwebapp
-                        '''
+                  sshPublisher(publishers: [sshPublisherDesc(configName: 'sshHost', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '''
+
+
+               docker rm -f newcontainer
+              docker run -d --name newcontainer theankitojha/dockerwebapp''', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: 'abc.txt', usePty: true)], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+                      
                   }  
                 }
             }
